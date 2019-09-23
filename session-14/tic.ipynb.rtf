@@ -1,0 +1,1628 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf100
+{\fonttbl\f0\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 \{\
+ "cells": [\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 1,\
+   "metadata": \{\
+    "collapsed": true\
+   \},\
+   "outputs": [],\
+   "source": [\
+    "import numpy as np\\n",\
+    "import pandas as pd\\n",\
+    "import matplotlib.pyplot as plt\\n",\
+    "import seaborn as sns\\n",\
+    "\\n",\
+    "%matplotlib inline"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 2,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "train = pd.read_csv(\\"titanic_train.csv\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 3,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>PassengerId</th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Name</th>\\n",\
+       "      <th>Sex</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Ticket</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>Cabin</th>\\n",\
+       "      <th>Embarked</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Braund, Mr. Owen Harris</td>\\n",\
+       "      <td>male</td>\\n",\
+       "      <td>22.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>A/5 21171</td>\\n",\
+       "      <td>7.2500</td>\\n",\
+       "      <td>NaN</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>2</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>38.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>PC 17599</td>\\n",\
+       "      <td>71.2833</td>\\n",\
+       "      <td>C85</td>\\n",\
+       "      <td>C</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   PassengerId  Survived  Pclass  \\\\\\n",\
+       "0            1         0       3   \\n",\
+       "1            2         1       1   \\n",\
+       "\\n",\
+       "                                                Name     Sex   Age  SibSp  \\\\\\n",\
+       "0                            Braund, Mr. Owen Harris    male  22.0      1   \\n",\
+       "1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   \\n",\
+       "\\n",\
+       "   Parch     Ticket     Fare Cabin Embarked  \\n",\
+       "0      0  A/5 21171   7.2500   NaN        S  \\n",\
+       "1      0   PC 17599  71.2833   C85        C  "\
+      ]\
+     \},\
+     "execution_count": 3,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.head(2)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 4,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "<class 'pandas.core.frame.DataFrame'>\\n",\
+      "RangeIndex: 891 entries, 0 to 890\\n",\
+      "Data columns (total 12 columns):\\n",\
+      "PassengerId    891 non-null int64\\n",\
+      "Survived       891 non-null int64\\n",\
+      "Pclass         891 non-null int64\\n",\
+      "Name           891 non-null object\\n",\
+      "Sex            891 non-null object\\n",\
+      "Age            714 non-null float64\\n",\
+      "SibSp          891 non-null int64\\n",\
+      "Parch          891 non-null int64\\n",\
+      "Ticket         891 non-null object\\n",\
+      "Fare           891 non-null float64\\n",\
+      "Cabin          204 non-null object\\n",\
+      "Embarked       889 non-null object\\n",\
+      "dtypes: float64(2), int64(5), object(5)\\n",\
+      "memory usage: 83.6+ KB\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "train.info()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 5,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>PassengerId</th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>count</th>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>714.000000</td>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>mean</th>\\n",\
+       "      <td>446.000000</td>\\n",\
+       "      <td>0.383838</td>\\n",\
+       "      <td>2.308642</td>\\n",\
+       "      <td>29.699118</td>\\n",\
+       "      <td>0.523008</td>\\n",\
+       "      <td>0.381594</td>\\n",\
+       "      <td>32.204208</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>std</th>\\n",\
+       "      <td>257.353842</td>\\n",\
+       "      <td>0.486592</td>\\n",\
+       "      <td>0.836071</td>\\n",\
+       "      <td>14.526497</td>\\n",\
+       "      <td>1.102743</td>\\n",\
+       "      <td>0.806057</td>\\n",\
+       "      <td>49.693429</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>min</th>\\n",\
+       "      <td>1.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>1.000000</td>\\n",\
+       "      <td>0.420000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>25%</th>\\n",\
+       "      <td>223.500000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>2.000000</td>\\n",\
+       "      <td>20.125000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>7.910400</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>50%</th>\\n",\
+       "      <td>446.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>3.000000</td>\\n",\
+       "      <td>28.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>14.454200</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>75%</th>\\n",\
+       "      <td>668.500000</td>\\n",\
+       "      <td>1.000000</td>\\n",\
+       "      <td>3.000000</td>\\n",\
+       "      <td>38.000000</td>\\n",\
+       "      <td>1.000000</td>\\n",\
+       "      <td>0.000000</td>\\n",\
+       "      <td>31.000000</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>max</th>\\n",\
+       "      <td>891.000000</td>\\n",\
+       "      <td>1.000000</td>\\n",\
+       "      <td>3.000000</td>\\n",\
+       "      <td>80.000000</td>\\n",\
+       "      <td>8.000000</td>\\n",\
+       "      <td>6.000000</td>\\n",\
+       "      <td>512.329200</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "       PassengerId    Survived      Pclass         Age       SibSp  \\\\\\n",\
+       "count   891.000000  891.000000  891.000000  714.000000  891.000000   \\n",\
+       "mean    446.000000    0.383838    2.308642   29.699118    0.523008   \\n",\
+       "std     257.353842    0.486592    0.836071   14.526497    1.102743   \\n",\
+       "min       1.000000    0.000000    1.000000    0.420000    0.000000   \\n",\
+       "25%     223.500000    0.000000    2.000000   20.125000    0.000000   \\n",\
+       "50%     446.000000    0.000000    3.000000   28.000000    0.000000   \\n",\
+       "75%     668.500000    1.000000    3.000000   38.000000    1.000000   \\n",\
+       "max     891.000000    1.000000    3.000000   80.000000    8.000000   \\n",\
+       "\\n",\
+       "            Parch        Fare  \\n",\
+       "count  891.000000  891.000000  \\n",\
+       "mean     0.381594   32.204208  \\n",\
+       "std      0.806057   49.693429  \\n",\
+       "min      0.000000    0.000000  \\n",\
+       "25%      0.000000    7.910400  \\n",\
+       "50%      0.000000   14.454200  \\n",\
+       "75%      0.000000   31.000000  \\n",\
+       "max      6.000000  512.329200  "\
+      ]\
+     \},\
+     "execution_count": 5,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.describe()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 6,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>PassengerId</th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Name</th>\\n",\
+       "      <th>Sex</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Ticket</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>Cabin</th>\\n",\
+       "      <th>Embarked</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>True</td>\\n",\
+       "      <td>False</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>2</th>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>True</td>\\n",\
+       "      <td>False</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>3</th>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>4</th>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>False</td>\\n",\
+       "      <td>True</td>\\n",\
+       "      <td>False</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   PassengerId  Survived  Pclass   Name    Sex    Age  SibSp  Parch  Ticket  \\\\\\n",\
+       "0        False     False   False  False  False  False  False  False   False   \\n",\
+       "1        False     False   False  False  False  False  False  False   False   \\n",\
+       "2        False     False   False  False  False  False  False  False   False   \\n",\
+       "3        False     False   False  False  False  False  False  False   False   \\n",\
+       "4        False     False   False  False  False  False  False  False   False   \\n",\
+       "\\n",\
+       "    Fare  Cabin  Embarked  \\n",\
+       "0  False   True     False  \\n",\
+       "1  False  False     False  \\n",\
+       "2  False   True     False  \\n",\
+       "3  False  False     False  \\n",\
+       "4  False   True     False  "\
+      ]\
+     \},\
+     "execution_count": 6,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.isnull().head()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 7,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x24319052cf8>"\
+      ]\
+     \},\
+     "execution_count": 7,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nYII=\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x24315b30358>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.heatmap(train.isnull(),yticklabels=False, cbar=False, cmap=\\"viridis\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 8,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x24319052128>"\
+      ]\
+     \},\
+     "execution_count": 8,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nAAAASUVORK5CYII=\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x24319318240>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.countplot(x=\\"Survived\\",data=train)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 9,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x243193dffd0>"\
+      ]\
+     \},\
+     "execution_count": 9,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x2431909dac8>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.countplot(x=\\"Survived\\", data=train, hue=\\"Sex\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 10,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x2431944d160>"\
+      ]\
+     \},\
+     "execution_count": 10,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x243193ee940>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.countplot(x=\\"Survived\\", data=train, hue=\\"Pclass\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 11,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x243193eecf8>"\
+      ]\
+     \},\
+     "execution_count": 11,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nDHRJasT/AaRHZYMZ+AKTAAAAAElFTkSuQmCC\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x2431978e198>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.distplot(train['Age'].dropna(), kde=False, bins=40)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 12,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x2431984e4a8>"\
+      ]\
+     \},\
+     "execution_count": 12,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nqcuAkCR1/X8JpwrUTnE72wAAAABJRU5ErkJggg==\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x24319412860>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.countplot(train[\\"SibSp\\"])"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 13,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x243199048d0>"\
+      ]\
+     \},\
+     "execution_count": 13,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nVxy6EsHNMQAAAABJRU5ErkJggg==\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x2431945ce80>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.distplot(train['Fare'], kde=False, bins=40)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 14,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "177"\
+      ]\
+     \},\
+     "execution_count": 14,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train['Age'].isnull().values.ravel().sum()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 15,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "177"\
+      ]\
+     \},\
+     "execution_count": 15,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "np.count_nonzero(train[\\"Age\\"].isnull())"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 16,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "687"\
+      ]\
+     \},\
+     "execution_count": 16,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "np.count_nonzero(train['Cabin'].isnull().values)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 17,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x243199a90f0>"\
+      ]\
+     \},\
+     "execution_count": 17,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\nAABJRU5ErkJggg==\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x243199c20f0>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "sns.boxplot(x=\\"Pclass\\", y=\\"Age\\", data=train)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 18,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "38.233440860215055\\n",\
+      "29.87763005780347\\n",\
+      "25.14061971830986\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "#taking average age according to the Pclass\\n",\
+    "\\n",\
+    "print(train[train['Pclass']==1][\\"Age\\"].mean())\\n",\
+    "print(train[train['Pclass']==2][\\"Age\\"].mean())\\n",\
+    "print(train[train['Pclass']==3][\\"Age\\"].mean())"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": null,\
+   "metadata": \{\
+    "collapsed": true\
+   \},\
+   "outputs": [],\
+   "source": []\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 19,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "def add_age(row):\\n",\
+    "    age = row[0]\\n",\
+    "    pclass = row[1]\\n",\
+    "    \\n",\
+    "    if pd.isnull(age):\\n",\
+    "        if pclass==1:\\n",\
+    "            return 38.23\\n",\
+    "        elif pclass==2:\\n",\
+    "            return 29.87\\n",\
+    "        else:\\n",\
+    "            return 25.14\\n",\
+    "    else:\\n",\
+    "        return age"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 20,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "train['Age'] =train[['Age','Pclass']].apply(add_age, axis=1)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 21,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x24319a6c278>"\
+      ]\
+     \},\
+     "execution_count": 21,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x243197a46d8>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "# No NAN values in Age\\n",\
+    "sns.heatmap(train.isnull().values, yticklabels=False, cbar=False, cmap=\\"viridis\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 22,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "train.drop('Cabin', axis=1, inplace=True)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 23,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>PassengerId</th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Name</th>\\n",\
+       "      <th>Sex</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Ticket</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>Embarked</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Braund, Mr. Owen Harris</td>\\n",\
+       "      <td>male</td>\\n",\
+       "      <td>22.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>A/5 21171</td>\\n",\
+       "      <td>7.2500</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>2</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>38.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>PC 17599</td>\\n",\
+       "      <td>71.2833</td>\\n",\
+       "      <td>C</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>2</th>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Heikkinen, Miss. Laina</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>26.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>STON/O2. 3101282</td>\\n",\
+       "      <td>7.9250</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>3</th>\\n",\
+       "      <td>4</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>113803</td>\\n",\
+       "      <td>53.1000</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>4</th>\\n",\
+       "      <td>5</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Allen, Mr. William Henry</td>\\n",\
+       "      <td>male</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>373450</td>\\n",\
+       "      <td>8.0500</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   PassengerId  Survived  Pclass  \\\\\\n",\
+       "0            1         0       3   \\n",\
+       "1            2         1       1   \\n",\
+       "2            3         1       3   \\n",\
+       "3            4         1       1   \\n",\
+       "4            5         0       3   \\n",\
+       "\\n",\
+       "                                                Name     Sex   Age  SibSp  \\\\\\n",\
+       "0                            Braund, Mr. Owen Harris    male  22.0      1   \\n",\
+       "1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   \\n",\
+       "2                             Heikkinen, Miss. Laina  female  26.0      0   \\n",\
+       "3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   \\n",\
+       "4                           Allen, Mr. William Henry    male  35.0      0   \\n",\
+       "\\n",\
+       "   Parch            Ticket     Fare Embarked  \\n",\
+       "0      0         A/5 21171   7.2500        S  \\n",\
+       "1      0          PC 17599  71.2833        C  \\n",\
+       "2      0  STON/O2. 3101282   7.9250        S  \\n",\
+       "3      0            113803  53.1000        S  \\n",\
+       "4      0            373450   8.0500        S  "\
+      ]\
+     \},\
+     "execution_count": 23,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.head()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 24,\
+   "metadata": \{\
+    "collapsed": true\
+   \},\
+   "outputs": [],\
+   "source": [\
+    "train.dropna(inplace=True)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 25,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "<matplotlib.axes._subplots.AxesSubplot at 0x24319ab25c0>"\
+      ]\
+     \},\
+     "execution_count": 25,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \},\
+    \{\
+     "data": \{\
+      "image/png": "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\\n",\
+      "text/plain": [\
+       "<matplotlib.figure.Figure at 0x24319941fd0>"\
+      ]\
+     \},\
+     "metadata": \{\},\
+     "output_type": "display_data"\
+    \}\
+   ],\
+   "source": [\
+    "# No null values at all\\n",\
+    "sns.heatmap(train.isnull(), yticklabels=False,cbar=False,cmap=\\"viridis\\")"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 26,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>PassengerId</th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Name</th>\\n",\
+       "      <th>Sex</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Ticket</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>Embarked</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Braund, Mr. Owen Harris</td>\\n",\
+       "      <td>male</td>\\n",\
+       "      <td>22.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>A/5 21171</td>\\n",\
+       "      <td>7.2500</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>2</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>38.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>PC 17599</td>\\n",\
+       "      <td>71.2833</td>\\n",\
+       "      <td>C</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>2</th>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Heikkinen, Miss. Laina</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>26.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>STON/O2. 3101282</td>\\n",\
+       "      <td>7.9250</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>3</th>\\n",\
+       "      <td>4</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>\\n",\
+       "      <td>female</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>113803</td>\\n",\
+       "      <td>53.1000</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>4</th>\\n",\
+       "      <td>5</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>Allen, Mr. William Henry</td>\\n",\
+       "      <td>male</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>373450</td>\\n",\
+       "      <td>8.0500</td>\\n",\
+       "      <td>S</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   PassengerId  Survived  Pclass  \\\\\\n",\
+       "0            1         0       3   \\n",\
+       "1            2         1       1   \\n",\
+       "2            3         1       3   \\n",\
+       "3            4         1       1   \\n",\
+       "4            5         0       3   \\n",\
+       "\\n",\
+       "                                                Name     Sex   Age  SibSp  \\\\\\n",\
+       "0                            Braund, Mr. Owen Harris    male  22.0      1   \\n",\
+       "1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   \\n",\
+       "2                             Heikkinen, Miss. Laina  female  26.0      0   \\n",\
+       "3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   \\n",\
+       "4                           Allen, Mr. William Henry    male  35.0      0   \\n",\
+       "\\n",\
+       "   Parch            Ticket     Fare Embarked  \\n",\
+       "0      0         A/5 21171   7.2500        S  \\n",\
+       "1      0          PC 17599  71.2833        C  \\n",\
+       "2      0  STON/O2. 3101282   7.9250        S  \\n",\
+       "3      0            113803  53.1000        S  \\n",\
+       "4      0            373450   8.0500        S  "\
+      ]\
+     \},\
+     "execution_count": 26,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.head()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 27,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "sex = pd.get_dummies(data=train['Sex'], drop_first=True)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 28,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "embarked= pd.get_dummies(data=train['Embarked'], drop_first=True)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 29,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "frame = [train, sex , embarked]\\n",\
+    "train = pd.concat(frame, axis=1)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 30,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "train.drop(['Name',\\"PassengerId\\", \\"Sex\\",\\"Ticket\\", \\"Embarked\\" ], axis=1, inplace=True)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 31,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>Survived</th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>male</th>\\n",\
+       "      <th>Q</th>\\n",\
+       "      <th>S</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>22.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>7.2500</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>38.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>71.2833</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>2</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>26.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>7.9250</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>3</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>53.1000</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>4</th>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>8.0500</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   Survived  Pclass   Age  SibSp  Parch     Fare  male  Q  S\\n",\
+       "0         0       3  22.0      1      0   7.2500     1  0  1\\n",\
+       "1         1       1  38.0      1      0  71.2833     0  0  0\\n",\
+       "2         1       3  26.0      0      0   7.9250     0  0  1\\n",\
+       "3         1       1  35.0      1      0  53.1000     0  0  1\\n",\
+       "4         0       3  35.0      0      0   8.0500     1  0  1"\
+      ]\
+     \},\
+     "execution_count": 31,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "train.head()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 451,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/html": [\
+       "<div>\\n",\
+       "<style>\\n",\
+       "    .dataframe thead tr:only-child th \{\\n",\
+       "        text-align: right;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe thead th \{\\n",\
+       "        text-align: left;\\n",\
+       "    \}\\n",\
+       "\\n",\
+       "    .dataframe tbody tr th \{\\n",\
+       "        vertical-align: top;\\n",\
+       "    \}\\n",\
+       "</style>\\n",\
+       "<table border=\\"1\\" class=\\"dataframe\\">\\n",\
+       "  <thead>\\n",\
+       "    <tr style=\\"text-align: right;\\">\\n",\
+       "      <th></th>\\n",\
+       "      <th>Pclass</th>\\n",\
+       "      <th>Age</th>\\n",\
+       "      <th>SibSp</th>\\n",\
+       "      <th>Parch</th>\\n",\
+       "      <th>Fare</th>\\n",\
+       "      <th>male</th>\\n",\
+       "      <th>Q</th>\\n",\
+       "      <th>S</th>\\n",\
+       "    </tr>\\n",\
+       "  </thead>\\n",\
+       "  <tbody>\\n",\
+       "    <tr>\\n",\
+       "      <th>0</th>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>22.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>7.2500</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>1</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>38.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>71.2833</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>2</th>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>26.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>7.9250</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>3</th>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>53.1000</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "    <tr>\\n",\
+       "      <th>4</th>\\n",\
+       "      <td>3</td>\\n",\
+       "      <td>35.0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>8.0500</td>\\n",\
+       "      <td>1</td>\\n",\
+       "      <td>0</td>\\n",\
+       "      <td>1</td>\\n",\
+       "    </tr>\\n",\
+       "  </tbody>\\n",\
+       "</table>\\n",\
+       "</div>"\
+      ],\
+      "text/plain": [\
+       "   Pclass   Age  SibSp  Parch     Fare  male  Q  S\\n",\
+       "0       3  22.0      1      0   7.2500     1  0  1\\n",\
+       "1       1  38.0      1      0  71.2833     0  0  0\\n",\
+       "2       3  26.0      0      0   7.9250     0  0  1\\n",\
+       "3       1  35.0      1      0  53.1000     0  0  1\\n",\
+       "4       3  35.0      0      0   8.0500     1  0  1"\
+      ]\
+     \},\
+     "execution_count": 451,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "X = train.drop('Survived', axis=1)\\n",\
+    "y = train['Survived']\\n",\
+    "X.head()"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 452,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "from sklearn.model_selection import train_test_split\\n",\
+    "X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.3, random_state=101)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 453,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "from sklearn.linear_model import LogisticRegression"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 454,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "data": \{\
+      "text/plain": [\
+       "LogisticRegression(C=10, class_weight=None, dual=False, fit_intercept=True,\\n",\
+       "          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\\n",\
+       "          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,\\n",\
+       "          verbose=0, warm_start=False)"\
+      ]\
+     \},\
+     "execution_count": 454,\
+     "metadata": \{\},\
+     "output_type": "execute_result"\
+    \}\
+   ],\
+   "source": [\
+    "model = LogisticRegression(C=10)\\n",\
+    "model.fit(X_train,y_train)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 455,\
+   "metadata": \{\},\
+   "outputs": [],\
+   "source": [\
+    "y_pred = model.predict(X_test)"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 456,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "             precision    recall  f1-score   support\\n",\
+      "\\n",\
+      "          0       0.82      0.91      0.86       163\\n",\
+      "          1       0.84      0.68      0.75       104\\n",\
+      "\\n",\
+      "avg / total       0.83      0.82      0.82       267\\n",\
+      "\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "from sklearn.metrics import classification_report\\n",\
+    "print(classification_report(y_test, y_pred))"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 457,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "Training set accuracy :  0.810289389068\\n",\
+      "Test set accuracy :  0.823970037453\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "print(\\"Training set accuracy : \\" ,model.score(X_train,y_train))\\n",\
+    "print(\\"Test set accuracy : \\",model.score(X_test,y_test))"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 458,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "[[149  14]\\n",\
+      " [ 33  71]]\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "from sklearn.metrics import confusion_matrix\\n",\
+    "print(confusion_matrix(y_test,y_pred))"\
+   ]\
+  \},\
+  \{\
+   "cell_type": "code",\
+   "execution_count": 459,\
+   "metadata": \{\},\
+   "outputs": [\
+    \{\
+     "name": "stdout",\
+     "output_type": "stream",\
+     "text": [\
+      "0.823970037453\\n"\
+     ]\
+    \}\
+   ],\
+   "source": [\
+    "from sklearn.metrics import accuracy_score\\n",\
+    "print(accuracy_score(y_test, y_pred))"\
+   ]\
+  \}\
+ ],\
+ "metadata": \{\
+  "kernelspec": \{\
+   "display_name": "Python 3",\
+   "language": "python",\
+   "name": "python3"\
+  \},\
+  "language_info": \{\
+   "codemirror_mode": \{\
+    "name": "ipython",\
+    "version": 3\
+   \},\
+   "file_extension": ".py",\
+   "mimetype": "text/x-python",\
+   "name": "python",\
+   "nbconvert_exporter": "python",\
+   "pygments_lexer": "ipython3",\
+   "version": "3.6.3"\
+  \}\
+ \},\
+ "nbformat": 4,\
+ "nbformat_minor": 2\
+\}\
+}
