@@ -4,16 +4,12 @@
 
 <h2>HTML Forms</h2>
 
-<form action="/action_page.php", method="POST">
+<form action="/submit", method="POST">
   First name:<br>
   
-  <input type="text" name="firstname" value="Mickey">
+  <input type="text" name="quote" value="Mickey">
   
-  <br>
-  Last name:<br>
-  
-  <input type="text" name="lastname" value="Mouse">
-  <br><br>
+
   
   <input type="submit" value="Submit">
   
